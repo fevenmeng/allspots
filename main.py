@@ -4,6 +4,14 @@ from fake_useragent import UserAgent #used to create fake user inorder for reque
 import pandas as pd
 import os
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import nltk
+
+for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
+    try:
+        nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
+    except LookupError:
+        nltk.download(resource)
+
 #pip install requests beautifulsoup4 fake-useragent pandas vaderSentiment nltk langid pycountry psycopg2-binary
 
 
