@@ -137,7 +137,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
-nltk.download('punket_tab')
+
 
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
