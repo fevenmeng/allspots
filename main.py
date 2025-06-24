@@ -137,8 +137,14 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
-nltk.download("punkt")
-nltk.word_tokenize(text)
+def count_words_without_stopwords(text):
+    if isinstance(text,(str,bytes)):
+        words = nltk.word_tokenize(str(text))
+        stop_words = set(stopwords.words('english'))
+        filtered_words = [word for word in words if word.lower() not in stop_words ]
+        return  len(filtered_words)  
+    else:
+        return 0  # add explicit return
 
 
 def count_words_without_stopwords(text):
