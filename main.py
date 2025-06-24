@@ -137,6 +137,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
+nltk.data.load("tokenizers/punkt/english.pickle")
 
 
 def count_words_without_stopwords(text):
