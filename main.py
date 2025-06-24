@@ -137,26 +137,20 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
+# Fix your headers to correct 'User-Agent'
+headers= {'User-Agent': userAgent}  
+
+# Fix count_words_without_stopwords: add explicit return 0
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
         words = nltk.word_tokenize(str(text))
         stop_words = set(stopwords.words('english'))
         filtered_words = [word for word in words if word.lower() not in stop_words ]
-        return  len(filtered_words)  
+        return len(filtered_words)  
     else:
-        return 0  # add explicit return
-
-
-def count_words_without_stopwords(text):
-    if isinstance(text,(str,bytes)):
-        words = nltk.word_tokenize(str(text))
-        stop_words = set(stopwords.words('english'))
-        filtered_words = [word for word in words if word.lower() not in stop_words ]
-        return  len(filtered_words)  
-    else:
-        0
+        return 0
         
-merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
+merge_df['Word_Count'] = merge_df['Article_Content'].apply(count_words_without_stopwords)
    
 
 sid = SentimentIntensityAnalyzer()
