@@ -3,11 +3,6 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent #used to create fake user inorder for requests
 import pandas as pd
 import os
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-#pip install requests beautifulsoup4 fake-useragent pandas vaderSentiment nltk langid pycountry psycopg2-binary
-
-
-
 
 url = 'https://dev.to/latest'
 
@@ -88,6 +83,7 @@ df = pd.DataFrame(
 df= df[ df['Link'] != 'None']
 
 
+##Second_url = 'https://dev.to/sejdi_gashi/live-and-online-our-food-waste-reduction-platform-is-almost-ready-5dfi'
 article = []
 article_link = []
 
@@ -118,7 +114,10 @@ article_df = pd.DataFrame(
       'Link' : article_link
       }
     )
+
+#merge 2 dataframe
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
+                                                     
 
 from nltk.corpus import stopwords
 import nltk
@@ -129,7 +128,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
-nltk.download('punket_tab')
+#nltk.download('punket_tab')
 
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
@@ -141,8 +140,9 @@ def count_words_without_stopwords(text):
         0
         
 merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
-   
 
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import pandas as pd
 sid = SentimentIntensityAnalyzer()
 
 def get_sentiment(row):
@@ -162,7 +162,6 @@ def get_sentiment(row):
 #df[['Sentiment' , 'Compound_Score']] = df['Article_Content'].astype(str).apply(lambda x: pd.Series(get_sentiment(x)))
 merge_df[['Sentiment', 'Compound_Score']] = merge_df['Article_Content'].astype(str).apply( lambda x: pd.Series(get_sentiment(x)))   
 
-
 import pandas as pd 
 import langid
 import pycountry
@@ -181,7 +180,6 @@ merge_df = merge_df[merge_df['Language'] == 'English']
 merge_df['Reading_Time'] = merge_df['Reading_Time'].astype(str).str.replace(' min read', '', regex=False).str.strip().replace('', '0').astype(int)
 
     
-
 import psycopg2
 db_parms = {
     "dbname": "postgres" ,
@@ -221,4 +219,4 @@ finally:
     if conn:
         cursor.close () 
         conn.close      
-                                                           
+     
