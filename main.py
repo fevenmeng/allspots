@@ -11,193 +11,226 @@ import langid
 import pycountry
 import psycopg2
 
-# ------------------------------
-# NLTK setup
-# ------------------------------
-nltk.download('stopwords')
-nltk.download('vader_lexicon')
-
-# ------------------------------
-# Scrape Latest DEV.to Articles
-# ------------------------------
 url = 'https://dev.to/latest'
-ua = UserAgent()
-headers = {'User-Agent': ua.random}
-page = requests.get(url, headers=headers)
-soup = BeautifulSoup(page.content, 'html.parser')
-blog_box = soup.find_all('div', class_='crayons-story')
 
-links, titles, time_uploaded, authors, tags, reading_times = [], [], [], [], [], []
+ua=UserAgent()
+userAgent= ua.random
+headers= {'User_Agent': userAgent}
+page = requests.get(url, headers = headers)
+soup= BeautifulSoup(page.content,'html.parser')
+
+blog_box = soup.find_all('div' ,'crayons-story')
+
+links = [] 
+titles = [] 
+time_uploaded = []  
+authors = []
+tags = []
+reading_times = []
+
 
 for box in blog_box:
-    # Links and Titles
-    title_elem = box.find('h2', class_='crayons-story__title')
-    if title_elem and title_elem.a:
-        links.append(title_elem.a['href'])
-        titles.append(title_elem.text.replace('\n', '').strip())
+    #links
+    if box.find('h2', class_ = 'crayons-story__title') is not None:
+        link =  box.find('h2', class_ = 'crayons-story__title').a
+        link = link['href']
+        links.append(link)
     else:
-        links.append('None')
-        titles.append('None')
+        links.append('None')  
+        
+    #titles    
+    if box.find('h2', class_ = 'crayons-story__title') is not None:
+        title =  box.find('h2', class_ = 'crayons-story__title')
+        titles.append(title.text.replace('\n','').strip())
+    else:
+        titles.append('None')          
 
-    # Time Uploaded
-    time_elem = box.find('time', attrs={'datetime': True})
-    time_uploaded.append(time_elem['datetime'] if time_elem else 'None')
+    #time_uploaded 
+    if box.find('time', attrs={'datetime': True}) is not None:
+        time_upload =  box.find('time', attrs={'datetime': True})
+        time_upload= time_upload['datetime']
+        time_uploaded.append (time_upload)
+    else:
+        time_uploaded.append('None') 
 
-    # Author
-    author_elem = box.find('a', class_='crayons-story__secondary fw-medium m:hidden')
-    authors.append(author_elem.text.strip() if author_elem else 'None')
+    #authors 
+    if box.find('a', class_ = 'crayons-story__secondary fw-medium m:hidden') is not None:
+        author =  box.find('a', class_ = 'crayons-story__secondary fw-medium m:hidden')
+        authors.append(author.text.replace('\n','').strip())
+    else:
+        authors.append('None')  
 
-    # Tags
-    tag_elem = box.find('div', class_='crayons-story__tags')
-    tags.append(tag_elem.text.replace('\n', ' ').strip() if tag_elem else 'None')
 
-    # Reading Time
-    rt_elem = box.find('div', class_='crayons-story__save')
-    reading_times.append(rt_elem.text.replace('\n', ' ').strip() if rt_elem else 'None')
+    #tags  
+    if box.find('div', class_ = 'crayons-story__tags') is not None:
+        tag =  box.find('div', class_ = 'crayons-story__tags')
+        tags.append(tag.text.replace('\n',' ').strip())
+    else:
+        tags.append('None')
+        
+ #reading_time  
+    if box.find('div', class_ = 'crayons-story__save') is not None:
+        reading_time  =  box.find('div', class_ = 'crayons-story__save')
+        reading_times.append(reading_time.text.replace('\n',' ').strip())
+    else:
+        reading_times.append('None')  
+  
+  
+df = pd.DataFrame(
+    {
+    'Link' : links,
+    'Title' : titles,
+    'Time_Uploaded' : time_uploaded ,
+    'Authors' : authors,
+    'Tags' : tags,
+    'Reading_Time' : reading_times
+    }
+) 
 
-# Create initial DataFrame
-df = pd.DataFrame({
-    'Link': links,
-    'Title': titles,
-    'Time_Uploaded': time_uploaded,
-    'Authors': authors,
-    'Tags': tags,
-    'Reading_Time': reading_times
-})
-df = df[df['Link'] != 'None']
+df= df[ df['Link'] != 'None']
 
-# ------------------------------
-# Scrape Full Article Content
-# ------------------------------
+
+##Second_url = 'https://dev.to/sejdi_gashi/live-and-online-our-food-waste-reduction-platform-is-almost-ready-5dfi'
 article = []
 article_link = []
 
-def get_full_content(second_url):
+def get_full_content (Second_url):
+    ua=UserAgent()
+    userAgent= ua.random
+    headers= {'User_Agent': userAgent}
+    page = requests.get(Second_url, headers = headers)
+    soup= BeautifulSoup(page.content,'html.parser')
+    print(Second_url)
+
+    content = soup.find ('div',class_='crayons-article__main')
+    paragrphs = content.find_all('p')
+
+    contents = []
+    for i in paragrphs:
+        contents.append(i.text.replace('\n',' '))
+    
+    string  = ' '.join(contents)
+    article.append (string)
+    article_link.append(Second_url)
+
+for i in df.Link:
+    get_full_content(i)
+article_df = pd.DataFrame(
+      {
+      'Article_Content' : article,
+      'Link' : article_link
+      }
+    )
+
+#merge 2 dataframe
+merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
+
+#from nltk.corpus import stopwords
+#import nltk
+#from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+
+
+# Download required datasets (without 'punket_tab')
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+nltk.download('vader_lexicon')
+#nltk.download('punket_tab')
+
+for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
     try:
-        ua = UserAgent()
-        headers = {'User-Agent': ua.random}
-        page = requests.get(second_url, headers=headers)
-        soup = BeautifulSoup(page.content, 'html.parser')
+        nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
+    except LookupError:
+        nltk.download(resource)
 
-        content = soup.find('div', class_='crayons-article__main')
-        if not content:
-            article.append("None")
-            article_link.append(second_url)
-            return
-
-        paragraphs = content.find_all('p')
-        text = ' '.join([p.text.strip() for p in paragraphs])
-        article.append(text)
-        article_link.append(second_url)
-
-    except Exception as e:
-        article.append("Error fetching article")
-        article_link.append(second_url)
-
-for link in df.Link:
-    full_url = 'https://dev.to' + link if link.startswith('/') else link
-    get_full_content(full_url)
-
-article_df = pd.DataFrame({
-    'Article_Content': article,
-    'Link': article_link
-})
-
-# Merge both DataFrames
-merge_df = pd.merge(df, article_df, on='Link', how='inner')
-
-# ------------------------------
-# Word Count (Regex-based, no punkt)
-# ------------------------------
 def count_words_without_stopwords(text):
-    if isinstance(text, str):
-        words = re.findall(r'\b\w+\b', text.lower())
+    if isinstance(text,(str,bytes)):
+        words = nltk.word_tokenize(str(text))
         stop_words = set(stopwords.words('english'))
-        return len([w for w in words if w not in stop_words])
-    return 0
+        filtered_words = [word for word in words if word.lower() not in stop_words ]
+        return  len(filtered_words)  
+    else:
+        0
+        
+merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
 
-merge_df['Word_Count'] = merge_df['Article_Content'].apply(count_words_without_stopwords)
-
-# ------------------------------
-# Sentiment Analysis
-# ------------------------------
+#from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+#import pandas as pd
 sid = SentimentIntensityAnalyzer()
 
-def get_sentiment(text):
-    scores = sid.polarity_scores(text)
-    compound = scores['compound']
-    if compound >= 0.05:
-        return 'Positive', compound
-    elif compound <= -0.05:
-        return 'Negative', compound
+def get_sentiment(row):
+    
+    sentiment_scores = sid.polarity_scores(merge_df.Article_Content[20])
+    compound_score = sentiment_scores['compound']
+
+    if compound_score >= 0.05:
+      sentiment = 'Positive'
+    elif compound_score <=  -0.05:
+      sentiment = 'Negative'
     else:
-        return 'Neutral', compound
+      sentiment = 'Neutral' 
+     
+    return sentiment , compound_score   
+         
+#df[['Sentiment' , 'Compound_Score']] = df['Article_Content'].astype(str).apply(lambda x: pd.Series(get_sentiment(x)))
+merge_df[['Sentiment', 'Compound_Score']] = merge_df['Article_Content'].astype(str).apply( lambda x: pd.Series(get_sentiment(x)))   
 
-merge_df[['Sentiment', 'Compound_Score']] = merge_df['Article_Content'].astype(str).apply(
-    lambda x: pd.Series(get_sentiment(x))
-)
+#import pandas as pd 
+#import langid
+#import pycountry
 
-# ------------------------------
-# Language Detection
-# ------------------------------
-def detect_language(text):
+def detect_language(text) :
+    # conver NAN to an empty string
     text = str(text) if pd.notna(text) else ''
-    lang, _ = langid.classify(text)
+    
+    # use langid to detect the language
+    lang, confidence = langid.classify(text)
     return lang
+merge_df['Language'] =merge_df['Article_Content'].apply(detect_language)
+merge_df['Language']=merge_df['Language'].map(lambda code: pycountry.languages.get(alpha_2=code).name if pycountry.languages.get(alpha_2=code) else code)
 
-merge_df['Language'] = merge_df['Article_Content'].apply(detect_language)
-merge_df['Language'] = merge_df['Language'].map(
-    lambda code: pycountry.languages.get(alpha_2=code).name if pycountry.languages.get(alpha_2=code) else code
-)
+#merge_df = merge_df[merge_df['Language'] == 'English']
+merge_df['Reading_Time'] = merge_df['Reading_Time'].astype(str).str.replace(' min read', '', regex=False).str.strip().replace('', '0').astype(int)
 
-# ------------------------------
-# Clean Reading Time
-# ------------------------------
-merge_df['Reading_Time'] = (
-    merge_df['Reading_Time']
-    .astype(str)
-    .str.replace(' min read', '', regex=False)
-    .str.strip()
-    .replace('', '0')
-    .astype(int)
-)
-
-# ------------------------------
-# Insert into PostgreSQL
-# ------------------------------
+    
+import psycopg2
 db_parms = {
-    "dbname": "postgres",
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "host": os.getenv("DB_HOST"),
-    "port": "5432"
+    "dbname": "postgres" ,
+    "user": os.getenv("DB_USER") ,
+    "password" :os.getenv("DB_PASSWORD"),
+    "host" : os.getenv("DB_HOST"),
+    "port" :"5432"
 }
 
 try:
-    conn = psycopg2.connect(**db_parms)
+    #connect to postgreSQL
+    conn = psycopg2.connect (**db_parms)
     cursor = conn.cursor()
-
-    insert_query = """
-        INSERT INTO articles 
-        (Link, Title, Time_Uploaded, Authors, Tags, Reading_Time, Article_Content, Word_Count, Sentiment, Compound_Score, Language)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        ON CONFLICT (Link) DO NOTHING
+    
+    #sql insert query
+    insert_query ="""
+    Insert Into articles (Link, Title, Time_Uploaded, Authors, Tags, Reading_Time, Article_Content ,Word_Count, Sentiment, Compound_Score, Language )
+    Values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    ON CONFLICT (Link) DO NOTHING
     """
-
+    
+    # insert DataFrame records one by one
     for _, row in merge_df.iterrows():
-        cursor.execute(insert_query, (
-            row['Link'], row['Title'], row['Time_Uploaded'], row['Authors'], row['Tags'],
-            row['Reading_Time'], row['Article_Content'], row['Word_Count'],
-            row['Sentiment'], row['Compound_Score'], row['Language']
+        cursor.execute(insert_query,(
+            row['Link'], row['Title'],row['Time_Uploaded'] ,row['Authors'], row['Tags'], row['Reading_Time'],
+            row['Article_Content'],row['Word_Count'],row['Sentiment'], row['Compound_Score'],row['Language']
         ))
-
-    conn.commit()
-    print("Data inserted successfully!")
+        
+    #commit 
+    conn.commit()   
+    print ("Data inserted successfully!")
 
 except Exception as e:
-    print(" Error inserting data:", e)
-
+    print(e)
+    
 finally:
     if conn:
-        cursor.close()
-        conn.close()
+        cursor.close () 
+        conn.close      
+                                                
