@@ -121,12 +121,13 @@ merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
 from nltk.corpus import stopwords
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+# NLTK setup
 
 
 
 # Download required datasets (without 'punket_tab')
 nltk.download('stopwords')
-nltk.download('punkt')
+#nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
 #nltk.download('punket_tab')
