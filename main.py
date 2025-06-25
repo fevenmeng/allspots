@@ -117,11 +117,7 @@ article_df = pd.DataFrame(
 
 #merge 2 dataframe
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
-<<<<<<< HEAD
-                                                     
 
-=======
->>>>>>> 494538206dd2110f87979e57bb225f9df0288088
 from nltk.corpus import stopwords
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -133,16 +129,16 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
-<<<<<<< HEAD
+
 #nltk.download('punket_tab')
-=======
+
 
 for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
     try:
         nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
     except LookupError:
         nltk.download(resource)
->>>>>>> 494538206dd2110f87979e57bb225f9df0288088
+
 
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
@@ -233,8 +229,3 @@ finally:
     if conn:
         cursor.close () 
         conn.close      
-<<<<<<< HEAD
-     
-=======
-                                                           
->>>>>>> 494538206dd2110f87979e57bb225f9df0288088
