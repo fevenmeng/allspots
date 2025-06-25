@@ -132,6 +132,8 @@ nltk.download('wordnet')
 nltk.download('vader_lexicon')
 #nltk.download('punket_tab')
 
+
+# Download required datasets
 for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
     try:
         nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
@@ -139,11 +141,11 @@ for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
         nltk.download(resource)
 
 def count_words_without_stopwords(text):
-    if isinstance(text,(str,bytes)):
+    if isinstance(text, (str, bytes)):
         words = nltk.word_tokenize(str(text))
         stop_words = set(stopwords.words('english'))
-        filtered_words = [word for word in words if word.lower() not in stop_words ]
-        return  len(filtered_words)  
+        filtered_words = [word for word in words if word.lower() not in stop_words]
+        return len(filtered_words)
     else:
         return 0
         
