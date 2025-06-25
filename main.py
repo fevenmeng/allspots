@@ -208,7 +208,7 @@ db_parms = {
     "host" : os.getenv("DB_HOST"),
     "port" :"5432"
 }
-
+conn =None
 try:
     #connect to postgreSQL
     conn = psycopg2.connect (**db_parms)
