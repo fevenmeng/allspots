@@ -238,5 +238,5 @@ except Exception as e:
 finally:
     if conn:
         cursor.close () 
-        conn.close      
+        conn.close ()      
                                                 
