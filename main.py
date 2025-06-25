@@ -117,18 +117,32 @@ article_df = pd.DataFrame(
 
 #merge 2 dataframe
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
+<<<<<<< HEAD
                                                      
 
+=======
+>>>>>>> 494538206dd2110f87979e57bb225f9df0288088
 from nltk.corpus import stopwords
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-#Download the stopword datasets
+
+
+# Download required datasets (without 'punket_tab')
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
+<<<<<<< HEAD
 #nltk.download('punket_tab')
+=======
+
+for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
+    try:
+        nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
+    except LookupError:
+        nltk.download(resource)
+>>>>>>> 494538206dd2110f87979e57bb225f9df0288088
 
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
@@ -176,7 +190,7 @@ def detect_language(text) :
 merge_df['Language'] =merge_df['Article_Content'].apply(detect_language)
 merge_df['Language']=merge_df['Language'].map(lambda code: pycountry.languages.get(alpha_2=code).name if pycountry.languages.get(alpha_2=code) else code)
 
-merge_df = merge_df[merge_df['Language'] == 'English']
+#merge_df = merge_df[merge_df['Language'] == 'English']
 merge_df['Reading_Time'] = merge_df['Reading_Time'].astype(str).str.replace(' min read', '', regex=False).str.strip().replace('', '0').astype(int)
 
     
@@ -219,4 +233,8 @@ finally:
     if conn:
         cursor.close () 
         conn.close      
+<<<<<<< HEAD
      
+=======
+                                                           
+>>>>>>> 494538206dd2110f87979e57bb225f9df0288088
