@@ -129,7 +129,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
-#nltk.download('punket_tab')
+nltk.download('punket_tab')
 
 
 
