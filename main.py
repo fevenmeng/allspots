@@ -188,42 +188,43 @@ merge_df['Reading_Time'] = merge_df['Reading_Time'].astype(str).str.replace(' mi
 
     
 import psycopg2
+
+# Insert into PostgreSQL
+# ------------------------------
 db_parms = {
-    "dbname": "postgres" ,
-    "user": os.getenv("DB_USER") ,
-    "password" :os.getenv("DB_PASSWORD"),
-    "host" : os.getenv("DB_HOST"),
-    "port" :"5432"
+    "dbname": "postgres",
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST"),
+    "port": "5432"
 }
-conn =None
+
 try:
-    #connect to postgreSQL
-    conn = psycopg2.connect (**db_parms)
+    conn = psycopg2.connect(**db_parms)
     cursor = conn.cursor()
-    
-    #sql insert query
-    insert_query ="""
-    Insert Into articles (Link, Title, Time_Uploaded, Authors, Tags, Reading_Time, Article_Content ,Word_Count, Sentiment, Compound_Score, Language )
-    Values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-    ON CONFLICT (Link) DO NOTHING
+
+    insert_query = """
+        INSERT INTO articles 
+        (Link, Title, Time_Uploaded, Authors, Tags, Reading_Time, Article_Content, Word_Count, Sentiment, Compound_Score, Language)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        ON CONFLICT (Link) DO NOTHING
     """
-    
-    # insert DataFrame records one by one
+
     for _, row in merge_df.iterrows():
-        cursor.execute(insert_query,(
-            row['Link'], row['Title'],row['Time_Uploaded'] ,row['Authors'], row['Tags'], row['Reading_Time'],
-            row['Article_Content'],row['Word_Count'],row['Sentiment'], row['Compound_Score'],row['Language']
+        cursor.execute(insert_query, (
+            row['Link'], row['Title'], row['Time_Uploaded'], row['Authors'], row['Tags'],
+            row['Reading_Time'], row['Article_Content'], row['Word_Count'],
+            row['Sentiment'], row['Compound_Score'], row['Language']
         ))
-        
-    #commit 
-    conn.commit()   
-    print ("Data inserted successfully!")
+
+    conn.commit()
+    print("Data inserted successfully!")
 
 except Exception as e:
-    print(e)
-    
+    print(" Error inserting data:", e)
+
 finally:
     if conn:
-        cursor.close () 
-        conn.close ()    
+        cursor.close()
+        conn.close()
                                                 
