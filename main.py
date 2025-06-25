@@ -1,21 +1,8 @@
-import requests
+import  requests
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
+from fake_useragent import UserAgent #used to create fake user inorder for requests
 import pandas as pd
 import os
-import re
-import nltk
-from nltk.corpus import stopwords
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import langid
-import pycountry
-import psycopg2
-
-# ------------------------------
-# NLTK setup
-# ------------------------------
-nltk.download('stopwords')
-nltk.download('vader_lexicon')
 
 url = 'https://dev.to/latest'
 
@@ -131,9 +118,9 @@ article_df = pd.DataFrame(
 #merge 2 dataframe
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
 
-#from nltk.corpus import stopwords
-#import nltk
-#from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.corpus import stopwords
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
 
@@ -161,8 +148,8 @@ def count_words_without_stopwords(text):
         
 merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
 
-#from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-#import pandas as pd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import pandas as pd
 sid = SentimentIntensityAnalyzer()
 
 def get_sentiment(row):
@@ -182,9 +169,9 @@ def get_sentiment(row):
 #df[['Sentiment' , 'Compound_Score']] = df['Article_Content'].astype(str).apply(lambda x: pd.Series(get_sentiment(x)))
 merge_df[['Sentiment', 'Compound_Score']] = merge_df['Article_Content'].astype(str).apply( lambda x: pd.Series(get_sentiment(x)))   
 
-#import pandas as pd 
-#import langid
-#import pycountry
+import pandas as pd 
+import langid
+import pycountry
 
 def detect_language(text) :
     # conver NAN to an empty string
@@ -238,5 +225,5 @@ except Exception as e:
 finally:
     if conn:
         cursor.close () 
-        conn.close ()      
+        conn.close ()    
                                                 
