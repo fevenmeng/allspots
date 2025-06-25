@@ -119,20 +119,18 @@ article_df = pd.DataFrame(
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
 
 
-
-
-
-# Download required datasets (without 'punket_tab')
-from nltk.corpus import stopwords
 import nltk
+from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-#Download the stopword datasets
+                 #Download the stopword datasets
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
 #nltk.download('punket_tab')
+
+
 
 def count_words_without_stopwords(text):
     if isinstance(text,(str,bytes)):
@@ -141,7 +139,7 @@ def count_words_without_stopwords(text):
         filtered_words = [word for word in words if word.lower() not in stop_words ]
         return  len(filtered_words)  
     else:
-        0
+        return 0
         
 merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)
         
@@ -191,13 +189,13 @@ import psycopg2
 # Insert into PostgreSQL
 # ------------------------------
 db_parms = {
-    "dbname": "postgres",
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "host": os.getenv("DB_HOST"),
-    "port": "5432"
+    "dbname": "postgres" ,
+    "user": os.getenv("DB_USER") ,
+    "password" :os.getenv("DB_PASSWORD"),
+    "host" : os.getenv("DB_HOST"),
+    "port" :"5432"
 }
-
+conn =None
 try:
     conn = psycopg2.connect(**db_parms)
     cursor = conn.cursor()
@@ -224,6 +222,8 @@ except Exception as e:
 
 finally:
     if conn:
+
         cursor.close()
         conn.close()
                                                 
+
