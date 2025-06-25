@@ -15,7 +15,7 @@ import psycopg2
 # NLTK setup
 # ------------------------------
 nltk.download('stopwords')
-nltk.download('vader_lexicon'
+nltk.download('vader_lexicon')
 
 url = 'https://dev.to/latest'
 
