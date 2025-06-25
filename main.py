@@ -118,36 +118,32 @@ article_df = pd.DataFrame(
 #merge 2 dataframe
 merge_df = pd.merge(df, article_df, on = 'Link', how='inner')
 
-from nltk.corpus import stopwords
-import nltk
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-# NLTK setup
+
 
 
 
 # Download required datasets (without 'punket_tab')
+from nltk.corpus import stopwords
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+#Download the stopword datasets
 nltk.download('stopwords')
-#nltk.download('punkt')
+nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
 #nltk.download('punket_tab')
 
-
-# Download required datasets
-for resource in ['punkt', 'stopwords', 'wordnet', 'vader_lexicon']:
-    try:
-        nltk.data.find(f'tokenizers/{resource}' if resource == 'punkt' else f'corpora/{resource}')
-    except LookupError:
-        nltk.download(resource)
-
 def count_words_without_stopwords(text):
-    if isinstance(text, (str, bytes)):
+    if isinstance(text,(str,bytes)):
         words = nltk.word_tokenize(str(text))
         stop_words = set(stopwords.words('english'))
-        filtered_words = [word for word in words if word.lower() not in stop_words]
-        return len(filtered_words)
+        filtered_words = [word for word in words if word.lower() not in stop_words ]
+        return  len(filtered_words)  
     else:
-        return 0
+        0
+        
+merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)
         
 merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
 
