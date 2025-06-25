@@ -8,8 +8,14 @@ import nltk
 from nltk.corpus import stopwords
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import langid
-#import pycountry
+import pycountry
 import psycopg2
+
+# ------------------------------
+# NLTK setup
+# ------------------------------
+nltk.download('stopwords')
+nltk.download('vader_lexicon'
 
 url = 'https://dev.to/latest'
 
