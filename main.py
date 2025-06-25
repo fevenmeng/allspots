@@ -145,7 +145,7 @@ def count_words_without_stopwords(text):
         filtered_words = [word for word in words if word.lower() not in stop_words ]
         return  len(filtered_words)  
     else:
-        0
+        return 0
         
 merge_df ['Word_Count']  = merge_df ['Article_Content'].apply(count_words_without_stopwords)  
 
