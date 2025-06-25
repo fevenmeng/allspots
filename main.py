@@ -95,7 +95,8 @@ def get_full_content (Second_url):
     soup= BeautifulSoup(page.content,'html.parser')
     print(Second_url)
 
-    content = soup.find ('div',class_='crayons-article__main')
+    content = soup.find ('div', class_= "crayons-article__body text-styles spec__body")
+                         #class_='crayons-article__main')
     paragrphs = content.find_all('p')
 
     contents = []
