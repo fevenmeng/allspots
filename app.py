@@ -14,7 +14,7 @@ nltk.download('stopwords', quiet=True)
 load_dotenv()
 
 conn_str = os.environ['CONNECTION_STRING']
-import streamlit as st
+
 
 
 conn = psycopg2.connect(conn_str)
