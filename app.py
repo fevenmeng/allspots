@@ -13,13 +13,10 @@ nltk.download('stopwords', quiet=True)
 
 load_dotenv()
 
-#conn_str = os.environ['CONNECTION_STRING']
+conn_str = os.environ['CONNECTION_STRING']
 import streamlit as st
 
-conn_str = (
-    f"postgresql://{st.secrets['DB_USER']}:{st.secrets['DB_PASSWORD']}"
-    f"@{st.secrets['DB_HOST']}:{st.secrets['DB_PORT']}/{st.secrets['DB_NAME']}"
-)
+
 conn = psycopg2.connect(conn_str)
 query = "SELECT * FROM articles;"
 data = pd.read_sql(query, conn)
