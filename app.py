@@ -1,5 +1,5 @@
 import pandas as pd
-import psycopg
+import psycopg2
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -13,19 +13,13 @@ nltk.download('stopwords', quiet=True)
 
 load_dotenv()
 
-<<<<<<< HEAD
-conn_str = os.environ['CONNECTION_STRING']
-
-
-
-conn = psycopg2.connect(conn_str)
-=======
-import streamlit as st
 
 conn_str = st.secrets["CONNECTION_STRING"]
 
-conn = psycopg.connect(conn_str)
->>>>>>> 883bde2 (this)
+# Example: connect using psycopg2
+conn = psycopg2.connect(conn_str)
+
+
 query = "SELECT * FROM articles;"
 data = pd.read_sql(query, conn)
 conn.close()
@@ -36,7 +30,7 @@ df['Time_Uploaded'] = pd.to_datetime(df['Time_Uploaded'], errors='coerce')
 
 st.set_page_config(page_title="Dev.to Dashboard", layout="wide")
 
-st.title("🚀 Article Dashboard ")
+st.title("Article Dashboard ")
 
 # KPIs
 col1, col2, col3 = st.columns(3)
@@ -84,7 +78,7 @@ plt.tight_layout()
 st.pyplot(fig2)
 
 # Word cloud full width
-st.subheader("🏷️ Common Tags Word Cloud")
+st.subheader(" Common Tags Word Cloud")
 text = ' '.join(df['Tags'].dropna())
 wordcloud = WordCloud(width=800, height=300, background_color='white').generate(text)
 fig_wc, ax_wc = plt.subplots(figsize=(8, 3))
