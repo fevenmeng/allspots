@@ -7,9 +7,8 @@ vaderSentiment==3.3.2
 langid==1.1.6
 pycountry==24.6.1
 pymongo==4.10.1
-#psycopg-binary==3.2.9
-psycopg2==...  # or psycopg2-binary==...
-
+psycopg2-binary==2.9.9
+#psycopg2==...  # or psycopg2-binary==...
 python-dotenv==1.0.1
 streamlit==1.38.0
 matplotlib==3.9.2
