@@ -15,7 +15,7 @@ load_dotenv()
 
 <<<<<<< HEAD
 conn_str = os.environ['CONNECTION_STRING']
-import streamlit as st
+
 
 
 conn = psycopg2.connect(conn_str)
