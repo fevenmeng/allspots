@@ -13,11 +13,19 @@ nltk.download('stopwords', quiet=True)
 
 load_dotenv()
 
+<<<<<<< HEAD
 conn_str = os.environ['CONNECTION_STRING']
 import streamlit as st
 
 
 conn = psycopg2.connect(conn_str)
+=======
+import streamlit as st
+
+conn_str = st.secrets["CONNECTION_STRING"]
+
+conn = psycopg.connect(conn_str)
+>>>>>>> 883bde2 (this)
 query = "SELECT * FROM articles;"
 data = pd.read_sql(query, conn)
 conn.close()
